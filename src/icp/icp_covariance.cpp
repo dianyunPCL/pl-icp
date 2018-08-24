@@ -1,6 +1,6 @@
 #include "icp/icp.h"
 #include "csm/csm_all.h"
-#include "gsl_eigen/egsl_macros.h"
+#include "egsl/egsl_macros.h"
 
 #include <math.h>
 

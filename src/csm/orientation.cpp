@@ -1,8 +1,7 @@
-#include <math.h>
-
 #include "csm/csm_all.h"
-#include "gsl_eigen//egsl_macros.h"
+#include "egsl/egsl_macros.h"
 
+#include <math.h>
 #include <vector>
 
 
@@ -68,26 +67,26 @@ void filter_orientation(double theta0, double rho0, size_t n,
 
     egsl_push();
     /* Y = L x + R epsilon */
-    val Y = zeros(n,1);
-    val L = ones(n,1);
-    val R = zeros(n,n+1);
+    val Y = zeros(n, 1);
+    val L = ones(n, 1);
+    val R = zeros(n ,n+1);
 
-    size_t i; for(i=0; i<n; i++) {
+    for(size_t i=0; i<n; ++i) {
         *egsl_atmp(Y, i, 0)   = (rhos[i] - rho0) / (thetas[i] - theta0);
         *egsl_atmp(R, i, 0)   =               -1 / (thetas[i] - theta0);
         *egsl_atmp(R, i, i+1) =               +1 / (thetas[i] - theta0);
     }
 
     val eRinv = inv(m(R, tr(R)));
-    val vcov_f1 = inv(m3(tr(L),eRinv, L));
+    val vcov_f1 = inv(m3(tr(L), eRinv, L));
     val vf1 =   m4(vcov_f1, tr(L), eRinv, Y);
 
-    double cov_f1 = *egsl_atmp(vcov_f1,0,0);
-    double f1 = *egsl_atmp(vf1,0,0);
+    double cov_f1 = *egsl_atmp(vcov_f1, 0, 0);
+    double f1 = *egsl_atmp(vf1, 0, 0);
 
     *alpha = theta0 - atan(f1/rho0);
 
-    if(cos(*alpha)*cos(theta0)+sin(*alpha)*sin(theta0)>0)
+    if(cos(*alpha)*cos(theta0) + sin(*alpha)*sin(theta0) > 0)
         *alpha = *alpha + M_PI;
 
     double dalpha_df1  = rho0 / (square(rho0) + square(f1));
@@ -96,17 +95,17 @@ void filter_orientation(double theta0, double rho0, size_t n,
     *cov0_alpha	= square(dalpha_df1) * cov_f1 + square(dalpha_drho);
 
 #ifndef WINDOWS
-        if(std::isnan(*alpha)) {
+    if(std::isnan(*alpha)) {
 #else
-        if(_isnan(*alpha)) {
+    if(_isnan(*alpha)) {
 #endif
-        egsl_print("Y",Y);
-        egsl_print("L",L);
-        egsl_print("R",R);
-        egsl_print("eRinv",eRinv);
-        egsl_print("vcov_f1",vcov_f1);
+        egsl_print("Y", Y);
+        egsl_print("L", L);
+        egsl_print("R", R);
+        egsl_print("eRinv", eRinv);
+        egsl_print("vcov_f1", vcov_f1);
 
-        printf("   f1 = %f cov =%f \n", f1,cov_f1);
+        printf("   f1 = %f cov =%f \n", f1, cov_f1);
         printf("   f1/rho = %f \n", f1/rho0);
         printf("   atan = %f \n", atan(f1/rho0));
         printf("   theta0= %f \n", theta0);

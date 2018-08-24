@@ -1,7 +1,7 @@
 #ifndef H_LASER_DATA_JSON
 #define H_LASER_DATA_JSON
 
-#include "gsl_eigen/gsl_eigen.h"
+#include "egsl/gsl_eigen.h"
 #include "laser_data.h"
 #include "algos.h"
 

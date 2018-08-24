@@ -1,11 +1,4 @@
-//#include <gsl/gsl_matrix.h>
-//#include <gsl/gsl_blas.h>
-//#include <gsl/gsl_linalg.h>
-//#include <gsl/gsl_eigen.h>
-
-#include "gsl_eigen/egsl.h"
-
-
+#include "egsl/egsl.h"
 
 val egsl_sub(val v1,val v2){
 	return egsl_sum(v1, egsl_scale(-1.0,v2));

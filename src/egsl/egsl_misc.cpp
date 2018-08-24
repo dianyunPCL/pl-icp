@@ -1,4 +1,4 @@
-#include "gsl_eigen/egsl.h"
+#include "egsl/egsl.h"
 
 #include <math.h>
 #include <stdio.h>

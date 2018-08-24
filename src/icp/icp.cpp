@@ -1,11 +1,11 @@
 #include "csm/csm_all.h"
 #include "icp/icp.h"
-#include "gsl_eigen/gsl_eigen.h"
-#include "gsl_eigen/egsl_macros.h"
+#include "egsl/gsl_eigen.h"
+#include "egsl/egsl_macros.h"
 
 #include <math.h>
 #include <string.h>
-//#include <gpc/gpc.h>
+
 
 void sm_journal_open(const char* file) {
 	file = 0; (void) file;
@@ -112,7 +112,8 @@ void sm_icp(struct sm_params* params, struct sm_result*res) {
 					break;
 				}
                 iterations += my_iterations;
-		
+                if (iterations > params->max_iterations) break;
+
 				if(my_error < best_error) {
 					sm_debug("--Perturbation #%d resulted in error %f < %f\n", a,my_error,best_error);
 					gsl_vector_memcpy(best_x, x_a);

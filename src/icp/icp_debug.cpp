@@ -28,6 +28,6 @@ void debug_correspondences(struct sm_params * params) {
 						i, c2[i].valid, c2[i].j1, c2[i].j2, c2[i].dist2_j1);
 				}
 		}
-		if(1) exit(-1);
+//		if(1) exit(-1); // vance
 	}
 }

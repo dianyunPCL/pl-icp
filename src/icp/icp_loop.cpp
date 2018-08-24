@@ -1,6 +1,6 @@
-#include "gsl_eigen/gsl_eigen.h"
+#include "egsl/gsl_eigen.h"
 #include "gpc/gpc.h"
-#include "gsl_eigen/egsl_macros.h"
+#include "egsl/egsl_macros.h"
 #include "csm/csm_all.h"
 #include "icp/icp.h"
 
@@ -49,7 +49,7 @@ int icp_loop(struct sm_params*params, const double*q0, double*x_new,
 
 		/* If not many correspondences, bail out */
 		int num_corr = ld_num_valid_correspondences(laser_sens);
-		double fail_perc = 0.05;
+        double fail_perc = 0.01;    /// 0.05 orig
 		if(num_corr < fail_perc * laser_sens->nrays) { /* TODO: arbitrary */
 			sm_error("	: before trimming, only %d correspondences.\n",num_corr);
 			all_is_okay = 0;
@@ -71,11 +71,9 @@ int icp_loop(struct sm_params*params, const double*q0, double*x_new,
 		*total_error = error; 
 		*valid = num_corr_after;
 
-		sm_debug("  icp_loop: total error: %f  valid %d   mean = %f\n", *total_error, *valid, *total_error/ *valid);
-		
 		/* If not many correspondences, bail out */
 		if(num_corr_after < fail_perc * laser_sens->nrays){
-			sm_error("  icp_loop: failed: after trimming, only %d correspondences.\n",num_corr_after);
+            sm_error("icp_loop: failed: after trimming, only %d correspondences.\n",num_corr_after);
 			all_is_okay = 0;
 			egsl_pop_named("icp_loop iteration"); /* loop context */
 			break;
@@ -169,9 +167,9 @@ int compute_next_estimate(struct sm_params*params,
 
 			/** TODO: here we could use the estimated alpha */
 			double diff[2];
-			diff[0] = laser_ref->points[j1].p[0]-laser_ref->points[j2].p[0];
-			diff[1] = laser_ref->points[j1].p[1]-laser_ref->points[j2].p[1];
-			double one_on_norm = 1 / sqrt(diff[0]*diff[0]+diff[1]*diff[1]);
+            diff[0] = laser_ref->points[j1].p[0] - laser_ref->points[j2].p[0];
+            diff[1] = laser_ref->points[j1].p[1] - laser_ref->points[j2].p[1];
+            double one_on_norm = 1 / sqrt(diff[0]*diff[0] + diff[1]*diff[1]);
 			double normal[2];
 			normal[0] = +diff[1] * one_on_norm;
 			normal[1] = -diff[0] * one_on_norm;
@@ -179,10 +177,10 @@ int compute_next_estimate(struct sm_params*params,
 			double cos_alpha = normal[0];
 			double sin_alpha = normal[1];
 						
-			c[k].C[0][0] = cos_alpha*cos_alpha;
+            c[k].C[0][0] = cos_alpha * cos_alpha;
 			c[k].C[1][0] = 
-			c[k].C[0][1] = cos_alpha*sin_alpha;
-			c[k].C[1][1] = sin_alpha*sin_alpha;
+            c[k].C[0][1] = cos_alpha * sin_alpha;
+            c[k].C[1][1] = sin_alpha * sin_alpha;
 			
 /*			sm_debug("k=%d, i=%d sens_phi: %fdeg, j1=%d j2=%d,  alpha_seg=%f, cos=%f sin=%f \n", k,i,
 				rad2deg(laser_sens->theta[i]), j1,j2, atan2(sin_alpha,cos_alpha), cos_alpha,sin_alpha);*/

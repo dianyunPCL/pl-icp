@@ -1,7 +1,6 @@
-#include <math.h>
-
 #include "csm/csm_all.h"
 
+#include <math.h>
 
 /**
  * A very very simple clustering algorithm.

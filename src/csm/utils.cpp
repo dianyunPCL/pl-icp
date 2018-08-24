@@ -1,9 +1,8 @@
-#include <string.h>
-#include <errno.h>
-
 #include "csm/utils.h"
 #include "csm/csm_all.h"
 
+#include <string.h>
+#include <errno.h>
 
 /** Wraps around fopen and provides error message. */
 FILE * open_file(const char *filename, const char*mode);

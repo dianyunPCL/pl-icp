@@ -1,10 +1,7 @@
 #ifndef H_EASY_GSL
 #define H_EASY_GSL
 
-//#include <gsl/gsl_vector.h>
-//#include <gsl/gsl_matrix.h>
-
-#include "gsl_eigen/gsl_eigen.h"
+#include "egsl/gsl_eigen.h"
 
 //#ifdef __cplusplus
 //extern "C" {

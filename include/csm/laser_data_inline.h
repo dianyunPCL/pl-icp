@@ -1,11 +1,8 @@
 #ifndef H_LASER_DATA_INLINE
 #define H_LASER_DATA_INLINE
 
-//#include <gsl/gsl_math.h>
-//#include <gsl/gsl_vector.h>
-#include <limits>
-
 #include "csm/csm.h"
+#include <limits>
 
 /* Simple inline functions */
 

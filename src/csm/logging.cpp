@@ -1,13 +1,12 @@
+#include "csm/logging.h"
+#include "csm/csm_all.h"
+#include "csm/utils.h"
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
-
-#include "csm/logging.h"
-#include "csm/csm_all.h"
-#include "csm/utils.h"
-
 
 int sm_debug_write_flag = 0;
 

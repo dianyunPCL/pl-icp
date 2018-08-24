@@ -3,7 +3,7 @@
 */
 #include "gpc/gpc.h"
 #include "gpc/gpc_utils.h"
-#include "gsl_eigen/gsl_eigen.h"
+#include "egsl/gsl_eigen.h"
 
 #include <stdio.h>
 #include <math.h>

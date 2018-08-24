@@ -1,9 +1,11 @@
+#include "csm/csm_all.h"
+
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
 
-#include "csm/csm_all.h"
+
 
 double* alloc_double_array(int n, double def);
 int* alloc_int_array(int n, int def);
@@ -18,7 +20,7 @@ LDP ld_alloc_new(int nrays) {
 
 double* alloc_double_array(int n, double def) {
 	double *v = (double*) malloc(sizeof(double)*n);
-	int i=0; for(i=0;i<n;i++) {
+    int i=0; for(i=0; i<n; ++i) {
 		v[i] = def;
 	}
 	return v;
@@ -68,7 +70,7 @@ void ld_alloc(LDP ld, int nrays) {
 	for(i=0;i<3;i++) {
 		ld->odometry[i] = 
 		ld->estimate[i] = 
-        ld->global_pose[i] =
+        ld->last_trans[i] =
 		ld->true_pose[i] = std::numeric_limits<double>::quiet_NaN();
 	}
 	
@@ -87,52 +89,34 @@ void ld_alloc(LDP ld, int nrays) {
 }
 
 void ld_free(LDP ld) {
-//	ld_dealloc(ld);
+    ld_dealloc(ld);
     if (ld) free(ld);
 }
 
 void ld_dealloc(LDP ld){
-    if (ld->valid != NULL)          {std::cout << "ld->valid:" << ld->valid << std::endl; free(ld->valid);}
-//    if (ld->readings != NULL)       {std::cout << "ld->readings:" << ld->readings << std::endl;free(ld->readings);}
-    if (ld->readings_sigma != NULL) {std::cout << "ld->readings_sigma:" << ld->readings_sigma << std::endl;free(ld->readings_sigma);}
-    if (ld->theta != NULL)          {std::cout << "ld->theta:" << ld->theta << std::endl;free(ld->theta);}
-    if (ld->cluster != NULL)        {std::cout << "ld->cluster:" << ld->cluster << std::endl;free(ld->cluster);}
-    if (ld->alpha != NULL)          {std::cout << "ld->alpha:" << ld->alpha << std::endl;free(ld->alpha);}
-    if (ld->alpha_valid != NULL)    {std::cout << "ld->alpha_valid:" << ld->alpha_valid << std::endl;free(ld->alpha_valid);}
-    if (ld->true_alpha != NULL)     {std::cout << "ld->true_alpha:" << ld->true_alpha << std::endl;free(ld->true_alpha);}
-    if (ld->cov_alpha != NULL)      {std::cout << "ld->cov_alpha:" << ld->cov_alpha << std::endl;free(ld->cov_alpha);}
-    if (ld->up_bigger != NULL)      {std::cout << "ld->up_bigger:" << ld->up_bigger << std::endl;free(ld->up_bigger);}
-    if (ld->up_smaller != NULL)     {std::cout << "ld->up_smaller:" << ld->up_smaller << std::endl;free(ld->up_smaller);}
-    if (ld->down_bigger != NULL)    {std::cout << "ld->down_bigger:" << ld->down_bigger << std::endl;free(ld->down_bigger);}
-    if (ld->down_smaller != NULL)   {std::cout << "ld->down_smaller:" << ld->down_smaller << std::endl;free(ld->down_smaller);}
-    if (ld->corr != NULL)           {std::cout << "ld->corr:" << ld->corr << std::endl;free(ld->corr);}
-    if (ld->points != NULL)         {std::cout << "ld->points:" << ld->points << std::endl;free(ld->points);}
-    if (ld->points_w != NULL)       {std::cout << "ld->points_w:" << ld->points_w << std::endl;free(ld->points_w);}
-
-//    free(ld->valid);
-//    free(ld->readings);
-////    free(ld->readings_sigma);
-//    free(ld->theta);
-//    free(ld->cluster);
-////    free(ld->alpha);
-//    free(ld->alpha_valid);
-////    free(ld->true_alpha);
-////    free(ld->cov_alpha);
-//    free(ld->up_bigger);
-//    free(ld->up_smaller);
-//    free(ld->down_bigger);
-//    free(ld->down_smaller);
-//    free(ld->corr);
-//    free(ld->points);
-//    free(ld->points_w);
-
+    if (ld->valid != NULL)          { free(ld->valid);      ld->valid = nullptr; }
+    if (ld->readings != NULL)       { free(ld->readings);   ld->readings = nullptr; }
+    if (ld->theta != NULL)          { free(ld->theta);      ld->theta = nullptr; }
+    if (ld->cluster != NULL)        { free(ld->cluster);    ld->cluster = nullptr; }
+    if (ld->alpha != NULL)          { free(ld->alpha);      ld->alpha = nullptr; }
+    if (ld->true_alpha != NULL)     { free(ld->true_alpha); ld->true_alpha = nullptr; }
+    if (ld->cov_alpha != NULL)      { free(ld->cov_alpha);  ld->cov_alpha = nullptr; }
+    if (ld->up_bigger != NULL)      { free(ld->up_bigger);  ld->up_bigger = nullptr; }
+    if (ld->up_smaller != NULL)     { free(ld->up_smaller); ld->up_smaller = nullptr; }
+    if (ld->corr != NULL)           { free(ld->corr);       ld->corr = nullptr; }
+    if (ld->points != NULL)         { free(ld->points);     ld->points = nullptr; }
+    if (ld->points_w != NULL)       { free(ld->points_w);   ld->points_w = nullptr; }
+    if (ld->alpha_valid != NULL)    { free(ld->alpha_valid);    ld->alpha_valid = nullptr; }
+    if (ld->down_bigger != NULL)    { free(ld->down_bigger);    ld->down_bigger = nullptr; }
+    if (ld->down_smaller != NULL)   { free(ld->down_smaller);   ld->down_smaller = nullptr; }
+    if (ld->readings_sigma != NULL) { free(ld->readings_sigma); ld->readings_sigma = nullptr; }
 }
 
 
 void ld_compute_cartesian(LDP ld) {
 	int i;
     for(i=0; i<ld->nrays; i++) {
-/*		if(!ld_valid_ray(ld,i)) continue;*/
+        if(!ld_valid_ray(ld,i)) continue;
         double x = cos(ld->theta[i]) * ld->readings[i];
         double y = sin(ld->theta[i]) * ld->readings[i];
 		
@@ -191,7 +175,7 @@ int ld_num_valid_correspondences(LDP ld) {
 	return num;
 }
 
-
+/// min_reading and max_reading need a parameter
 int ld_valid_fields(LDP ld)  {
 	if(!ld) {
 		sm_error("NULL pointer given as laser_data*.\n");	
@@ -199,7 +183,7 @@ int ld_valid_fields(LDP ld)  {
 	}
 	
 	int min_nrays = 10;
-    int max_nrays = 1081;  // 10000
+    int max_nrays = 10000;  // 10000
     if(ld->frame_id < 0) {
         sm_error("Invalid key frame number: %d\n", ld->frame_id);
         return 0;
@@ -233,7 +217,7 @@ int ld_valid_fields(LDP ld)  {
 	/* Check that there are valid rays */
 	double min_reading = 0;
     double max_reading = 10.0;
-	int i; for(i=0;i<ld->nrays;i++) {
+    int i; for(i=0; i<ld->nrays; i++) {
 		double th = ld->theta[i];
 		if(ld->valid[i]) {
 			double r = ld->readings[i];
@@ -243,12 +227,8 @@ int ld_valid_fields(LDP ld)  {
 //				return 0;
                 ld->valid[i] = 0;
 			}
-			if( !( min_reading < r && r < max_reading ) ) {
-//				sm_error("Ray #%d: %f is not in interval (%f, %f) \n",
-//					i, r, min_reading, max_reading);
-//				return 0;
+            if( !(min_reading < r && r < max_reading) )
                 ld->valid[i] = 0;
-			}		
         } else {
 			/* ray not valid, but checking theta anyway */
 //			if(is_nan(th)) {
@@ -308,6 +288,7 @@ laser_data::laser_data(const struct laser_data& other)
     frame_id = other.frame_id;
     min_theta = other.min_theta;
     max_theta = other.max_theta;
+
     memcpy(valid, other.valid, sizeof(int)*nrays);
     memcpy(readings, other.readings, sizeof(double)*nrays);
     memcpy(readings_sigma, other.readings_sigma, sizeof(double)*nrays);
@@ -339,8 +320,8 @@ laser_data::laser_data(const struct laser_data& other)
     }
     for(i=0; i<3; ++i) {
         odometry[i] = other.odometry[i];
-        estimate[i] = other.estimate[i];
-        global_pose[i] = other.global_pose[i];
+        estimate[i] = other.estimate[i];        
         true_pose[i] = other.true_pose[i];
+        last_trans[i] = other.last_trans[i];
     }
 }

@@ -1,8 +1,9 @@
 #ifndef H_SCAN_MATCHING_LIB
 #define H_SCAN_MATCHING_LIB
 
-#include "gsl_eigen/gsl_eigen.h"
+#include "egsl/gsl_eigen.h"
 #include "laser_data.h"
+#include "csm/sm_config.h"
 
 struct sm_params {
 	/** First scan ("ref"erence scan) */
@@ -120,7 +121,16 @@ struct sm_params {
 	double min_reading, max_reading;
 
     /** for key frames selection */
+    int kf_delta_frame;
     double kf_dist_linear, kf_dist_angular;
+
+    /** for pose graph optimization */
+    int pg_max_iterations;
+    int pg_max_frames;
+
+    // copy construction
+    sm_params(){}
+    sm_params(const struct sm_params* other);
 };
 
 

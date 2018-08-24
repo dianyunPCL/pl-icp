@@ -1,0 +1,43 @@
+# parameters on CSM using pl-icp
+
+max_angular_correction_deg      = 45.0      # 最大角位移，单位度
+max_linear_correction           = 0.5       # 最大平移量，单位米
+max_iterations                  = 50        # 最大迭代次数
+epsilon_xy                      = 1.0e-6    # 平移终止阈值
+epsilon_theta                   = 0.005     # 旋转终于阈值，单位弧度
+max_correspondence_dist         = 0.25      # 匹配点最大距离阈值
+sigma                           = 0.005     # 激光噪声，单位米
+use_corr_tricks                 = 1         # 是否使用技巧寻找匹配点
+restart                         = 1         # 重匹配标志
+restart_threshold_mean_error    = 0.01      # 重匹配平均误差阈值
+restart_dt                      = 0.05      # 重匹配位移阈值
+restart_dtheta                  = 0.05      # 重匹配旋转阈值
+clustering_threshold            = 0.25      # 聚类阈值
+orientation_neighbourhood       = 10        # 计算旋转时考虑的邻域内点数
+use_point_to_line_distance      = 1         # PL-ICP / ICP
+do_alpha_test                   = 0         # 是否根据角度舍弃对应点，对精度无影响，但严重影响速度
+do_alpha_test_thresholdDeg      = 20.0      # 根据角度舍弃对应点的角度阈值
+outliers_maxPerc                = 0.95      # 匹配点的最大保留比
+outliers_adaptive_mult          = 2.0       # 自适应匹配点移除阈值
+outliers_adaptive_order         = 0.7       # 自适应匹配点移除阈值
+do_visibility_test              = 0         # 本质是对点的有效性检查，优化效果有限，没有存在必要，可删去
+outliers_remove_doubles         = 1         # 保证匹配点的唯一性，可提高精确度，但平均增加0.5ms耗时
+do_compute_covariance           = 0         # 是否计算协方差
+debug_verify_tricks             = 0         # 检查匹配的准确性，目前不可用
+use_ml_weights                  = 0         # 无用
+use_sigma_weights               = 0         # 采用激光权重，暂不可用
+min_reading                     = 0.0 
+max_reading                     = 10.0
+laser[0]                        = 0.0
+laser[1]                        = 0.0
+laser[2]                        = 0.0
+
+# keyframe params
+# set "kf_dist_angular" or "kf_dist_linear" to 0 if no need of keyframe.
+kf_delta_frame                  = 1         # 关键帧选择间隔,最小值为1, better less then 5 frames
+kf_dist_linear                  = 0.025     # 关键帧选择距离阈值, better less then 0.05 meter
+kf_dist_angular                 = 0.05      # 关键帧选择角度阈值, better less then 0.1 degree
+
+# pose graph optimization
+pg_max_iterations               = 5         # 图优化迭代次数
+pg_max_frames                   = 50        # 图优化启动相隔帧数

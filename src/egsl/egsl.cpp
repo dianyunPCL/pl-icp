@@ -1,8 +1,5 @@
-//#include <gsl/gsl_matrix.h>
-//#include <gsl/gsl_blas.h>
-//#include <gsl/gsl_linalg.h>
-#include "gsl_eigen/egsl.h"
-#include "gsl_eigen/egsl_imp.h"
+#include "egsl/egsl.h"
+#include "egsl/egsl_imp.h"
 
 #include <assert.h>
 #include <math.h>

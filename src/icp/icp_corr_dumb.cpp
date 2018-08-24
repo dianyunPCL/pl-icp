@@ -1,6 +1,6 @@
 #include "icp/icp.h"
 #include "csm/csm_all.h"
-#include "gsl_eigen/gsl_eigen.h"
+#include "egsl/gsl_eigen.h"
 
 
 int compatible(struct sm_params*params, int i, int j);

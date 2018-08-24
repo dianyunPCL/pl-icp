@@ -1,4 +1,4 @@
-#include "gsl_eigen/egsl.h"
+#include "egsl/egsl.h"
 
 val egsl_vFda(size_t rows, size_t cols, const double *a) {
 	val v = egsl_alloc(rows, cols);

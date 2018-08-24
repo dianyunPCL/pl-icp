@@ -21,56 +21,53 @@ typedef struct {
 } point2d;
 
 struct laser_data {
-	int nrays;
-	double  min_theta;
-	double  max_theta;
-	
-	double * restrict theta;
-	
-	int    * restrict valid;
-	double * restrict readings;
-	
-	int    * restrict cluster;
-	
+    int nrays;
+    int frame_id;
+    double  min_theta;
+    double  max_theta;
+
+    double * restrict theta;
+
+    int    * restrict valid;
+    double * restrict readings;
+
+    int    * restrict cluster;
+
     // Estimated orientation of the surface (radians, relative to robot).
     // It is an estimate of `ld.true_alpha[i]`.
-	double * restrict alpha;
+    double * restrict alpha;
     // Estimated covariance of `ld.alpha[i]`.
-	double * restrict cov_alpha;
+    double * restrict cov_alpha;
     // True if previous field is valid.
-	int    * restrict alpha_valid;
+    int    * restrict alpha_valid;
     // Orientation of the normal of the surface (radians, relative to robot).
     // It is `NAN` if not valid.
-	double * restrict true_alpha;
+    double * restrict true_alpha;
 
     double * restrict readings_sigma;
-	
-	struct correspondence*  restrict corr;
 
-	double true_pose[3];		
-	double odometry[3];	
-	double estimate[3];	
-	
+    struct correspondence*  restrict corr;
 
-	/** Cartesian representation */
-	point2d *  restrict points;
-	/** Cartesian representation, in "world" (laser_ref) coordinates. 
-	    Computed using ld_compute_world_coords() */
-	point2d *  restrict points_w;
+    double true_pose[3];
+    double odometry[3];
+    double estimate[3];
+    double last_trans[3];
 
-	/** Timestamp */
-	struct timeval tv;
-	char hostname[32];
+    /** Cartesian representation */
+    point2d *  restrict points;
+    /** Cartesian representation, in "world" (laser_ref) coordinates.
+        Computed using ld_compute_world_coords() */
+    point2d *  restrict points_w;
 
+    /** Timestamp */
+    struct timeval tv;
+    char hostname[32];
 
-	/* Jump tables needed by find_correspondences_tricks(). */
-	int * restrict up_bigger, 
-	    * restrict up_smaller, 
-	    * restrict down_bigger, 
-	    * restrict down_smaller;	
-
-    int frame_id;
-    double global_pose[3];
+    /* Jump tables needed by find_correspondences_tricks(). */
+    int * restrict up_bigger,
+        * restrict up_smaller,
+        * restrict down_bigger,
+        * restrict down_smaller;
 
     // copy constructor
     laser_data(const struct laser_data& other);

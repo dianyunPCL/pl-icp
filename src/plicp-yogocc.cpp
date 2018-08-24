@@ -9,9 +9,8 @@
 #include <ctime>
 #include <cstdlib>
 
-
 #include "csm/laser_data_yogo.h"
-#include "icp/pl_icp.h"
+#include "icp/icp_yogo.h"
 
 using namespace std;
 
@@ -34,9 +33,9 @@ int main(int argc, const char*argv[]) {
 
     // input data
     LDP laser_ref = set_laser_frame(range_ref, flags_ref,
-                                    num, delta_odom_ref);
+                                    delta_odom_ref, num, 0);
     LDP laser_curr = set_laser_frame(range_curr, flags_curr,
-                                     num, delta_odom_curr);
+                                     delta_odom_curr, num, 1);
     // check data
     if(!ld_valid_fields(laser_ref))  {
         sm_error(" -icp- Invalid laser data in first scan.\n");
@@ -52,25 +51,17 @@ int main(int argc, const char*argv[]) {
         return -3;
     }
 
-//    printf(" -icp- set input data sucessed!\n");
+    printf(" -icp- set input data sucessed!\n");
 
-    set_plicp_params(laser_ref, laser_curr);
+    sm_params params;
+    sm_result result;
+    set_plicp_params(&params);
 
-    vector<double> results(5);
-    Eigen::Matrix3d covariance;
-    do_plicp(results, covariance);
+    sm_icp(&params, &result);
 
-    double transform[3] = {results[0], results[1], results[2]};
     // output result
-    printf(" -icp- delta transform : [%f, %f, %f]\n", transform[0], transform[1], transform[2]);
-    printf(" -icp- cost time: %f ms\n", results[3]);
-    printf(" -icp- iterations: %d\n", int(results[4]));
-
-    vector<double> gp = get_global_position(transform);
-
-    printf(" -icp- global positions: [%f, %f, %f]\n", gp[0], gp[1], gp[2]);
-    printf(" -icp- covariance matrix:\n");
-    cout << covariance << endl;
+    printf(" -icp- delta transform : [%f, %f, %f]\n", result.x[0], result.x[1], result.x[2]);
+    printf(" -icp- iterations: %d\n", result.iterations);
 
     // free
     ld_free(laser_ref);

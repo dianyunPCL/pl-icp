@@ -1,7 +1,7 @@
 #ifndef H_MATH_UTILS_GSL
 #define H_MATH_UTILS_GSL
 
-#include "gsl_eigen/egsl.h"
+#include "egsl/egsl.h"
 
 #include "csm/laser_data.h"
 
