@@ -36,7 +36,7 @@ SET(ICP_SRC
 
 
 ADD_LIBRARY(cms_plicp #SHARED
-	${CSM_SRC}
+    ${CSM_SRC}
     ${EGSL_SRC}
     ${GPC_SRC}
     ${ICP_SRC}

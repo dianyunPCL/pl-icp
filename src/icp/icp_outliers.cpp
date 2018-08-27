@@ -51,11 +51,11 @@ void kill_outliers_double(struct sm_params*params) {
     std::vector<double> dist2_i(laser_sens->nrays, 0.0);
     //double dist2_j[laser_ref->nrays];
     std::vector<double> dist2_j(laser_ref->nrays, 0.0);
-    int j; for(j=0; j<laser_ref->nrays; j++)
+    int j; for(j=0; j<laser_ref->nrays; ++j)
         dist2_j[j]= 1000000;
 
     int i;
-    for(i=0; i<laser_sens->nrays; i++) {
+    for(i=0; i<laser_sens->nrays; ++i) {
         if(!ld_valid_corr(laser_sens, i)) continue;
         int j1 = laser_sens->corr[i].j1;
         dist2_i[i] = laser_sens->corr[i].dist2_j1;
@@ -67,7 +67,7 @@ void kill_outliers_double(struct sm_params*params) {
         if(!ld_valid_corr(laser_sens, i)) continue;
         int j1 = laser_sens->corr[i].j1;
         if(dist2_i[i] > (threshold*threshold)*dist2_j[j1]) {
-            laser_sens->corr[i].valid=0;
+            laser_sens->corr[i].valid = 0;
             nkilled ++;
         }
     }
@@ -90,12 +90,11 @@ void kill_outliers_trim(struct sm_params*params,  double*total_error) {
 
     /* dist2, indexed by k, contains the error for the k-th correspondence */
     int k = 0;
-    //double dist2[laser_sens->nrays];
     std::vector<double> dist2(laser_sens->nrays, 0.0);
 
     int i;
-    //double dist[laser_sens->nrays];
     std::vector<double> dist(laser_sens->nrays, 0.0);
+
     /* for each point in laser_sens */
     for(i=0; i<laser_sens->nrays; ++i) {
         /* which has a valid correspondence */
@@ -107,34 +106,28 @@ void kill_outliers_trim(struct sm_params*params,  double*total_error) {
 
         int j1 = laser_sens->corr[i].j1;
         int j2 = laser_sens->corr[i].j2;
+
         /* Compute the distance to the corresponding segment */
         dist[i]=  dist_to_segment_d(
             laser_ref->points[j1].p, laser_ref->points[j2].p, p_i_w);
         dist2[k] = dist[i];
         k++;
     }
-	
-	
-
-#if 0	
-	double dist2_copy[k]; for(i=0;i<k;i++) dist2_copy[i] = dist2[i];
-#endif 
 
     /* two errors limits are defined: */
-        /* In any case, we don't want more than outliers_maxPerc% */
-        int order = (int)floor(k*(params->outliers_maxPerc));
-            order = (std::max)(0, (std::min)(order, k-1));
+    /* In any case, we don't want more than outliers_maxPerc% */
+    int order = (int)floor(k*(params->outliers_maxPerc));
+        order = (std::max)(0, (std::min)(order, k-1));
 
-    /* The dists for the correspondence are sorted
-       in ascending order */
-        quicksort(dist2, 0, k-1);
-        double error_limit1 = dist2[order];
+    /* The dists for the correspondence are sorted in ascending order */
+    quicksort(dist2, 0, k-1);
+    double error_limit1 = dist2[order];
 
-        /* Then we take a order statics (o*K) */
-        /* And we say that the error must be less than alpha*dist(o*K) */
-        int order2 = (int)floor(k*params->outliers_adaptive_order);
-            order2 = (std::max)(0, (std::min)(order2, k-1));
-        double error_limit2 = params->outliers_adaptive_mult*dist2[order2];
+    /* Then we take a order statics (o*K) */
+    /* And we say that the error must be less than alpha*dist(o*K) */
+    int order2 = (int)floor(k*params->outliers_adaptive_order);
+        order2 = (std::max)(0, (std::min)(order2, k-1));
+    double error_limit2 = params->outliers_adaptive_mult * dist2[order2];
 
     double error_limit = (std::min)(error_limit1, error_limit2);
 
@@ -143,7 +136,7 @@ void kill_outliers_trim(struct sm_params*params,  double*total_error) {
 
     *total_error = 0;
     int nvalid = 0;
-    for(i=0; i<laser_sens->nrays; i++) {
+    for(i=0; i<laser_sens->nrays; ++i) {
         if(!ld_valid_corr(laser_sens, i)) continue;
         if(dist[i] > error_limit) {
             laser_sens->corr[i].valid = 0;
@@ -155,22 +148,23 @@ void kill_outliers_trim(struct sm_params*params,  double*total_error) {
         }
     }
 
-    sm_debug("\ticp_outliers: valid %d/%d (limit: %f) mean error = %f \n",nvalid,k,error_limit,
+    sm_debug("\ticp_outliers: valid %d/%d (limit: %f) mean error = %f \n", nvalid, k, error_limit,
         *total_error/nvalid);
 }
 
 
-void swap_double(double*a,double*b) {
+void swap_double(double*a, double*b) {
 	double t = *a; *a = *b; *b=t;
 }
 
 /** Code taken from Wikipedia */
+/// @Vance: 快速排序
 void quicksort(std::vector<double>& array, int begin, int end) {
     if (end > begin) {
         double pivot = array[begin];
         int l = begin + 1;
         int r = end+1;
-        while(l < r) {
+        while (l < r) {
             if (array[l] < pivot) {
                 l++;
             } else {
@@ -180,10 +174,10 @@ void quicksort(std::vector<double>& array, int begin, int end) {
         }
         l--;
         swap_double(&(array[begin]), &(array[l]));
-        if(l>begin)
-        quicksort(array, begin, l);
-        if(end>r)
-        quicksort(array, r, end);
+        if (l > begin)
+            quicksort(array, begin, l);
+        if (end > r)
+            quicksort(array, r, end);
     }
 }
 

@@ -10,15 +10,12 @@
 #include <sys/types.h>
 #include <iostream>
 
-
-#define PI 3.1415926
-
 using namespace  std;
 
 LDP ld_from_yogo_stream(const char* file, int nrays, int frame_id) {
     LDP ld = ld_alloc_new(nrays);
 	
-    double delta_a = PI / 720;
+    double delta_a = M_PI / 720;
     double delta_odom[3];
     int imu_data;
 
@@ -37,7 +34,7 @@ LDP ld_from_yogo_stream(const char* file, int nrays, int frame_id) {
     ld->min_theta = min_angle;
     ld->odometry[0] = 0.0;
     ld->odometry[1] = 0.0;
-    ld->odometry[2] = imu_data * 0.01 * PI / 180;
+    ld->odometry[2] = imu_data * 0.01 * M_PI / 180;
     ld->frame_id = frame_id;
 
     int range = 0;

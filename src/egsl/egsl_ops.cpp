@@ -1,47 +1,47 @@
 #include "egsl/egsl.h"
 
 val egsl_sub(val v1,val v2){
-	return egsl_sum(v1, egsl_scale(-1.0,v2));
+    return egsl_sum(v1, egsl_scale(-1.0,v2));
 }
 
 val egsl_compose_col(val v1, val v2){
-	gsl_matrix *m1 = egsl_gslm(v1);
-	gsl_matrix *m2 = egsl_gslm(v2);
-	egsl_expect_size(v2, 0, m1->cols());
-	val v3 = egsl_alloc(m1->rows()+m2->rows(),m1->cols());
-	gsl_matrix *m3 = egsl_gslm(v3);
-	int i,j;
+    gsl_matrix *m1 = egsl_gslm(v1);
+    gsl_matrix *m2 = egsl_gslm(v2);
+    egsl_expect_size(v2, 0, m1->cols());
+    val v3 = egsl_alloc(m1->rows()+m2->rows(),m1->cols());
+    gsl_matrix *m3 = egsl_gslm(v3);
+    int i,j;
     for(j=0; j<m1->cols(); j++) {
         for(i=0; i<m1->rows(); i++)
             gsl_matrix_set(m3, i, j, gsl_matrix_get(m1, i, j));
-		
+
         for(i=0;i<m2->rows(); i++)
             gsl_matrix_set(m3, m1->rows()+i, j, gsl_matrix_get(m2, i, j));
-	}
-	return v3;
+    }
+    return v3;
 }
 
 val egsl_compose_row(val v1, val v2){
-	gsl_matrix *m1 = egsl_gslm(v1);
-	gsl_matrix *m2 = egsl_gslm(v2);
-	egsl_expect_size(v2, m1->rows(), 0);
-	val v3 = egsl_alloc(m1->rows(), m1->cols() + m2->cols());
-	gsl_matrix *m3 = egsl_gslm(v3);
-	int i,j;
-	for(i=0;i<m1->rows();i++) {
-		for(j=0;j<m1->cols();j++)
-			gsl_matrix_set(m3, i, j, gsl_matrix_get(m1,i,j));
-		
-		for(j=0;j<m2->cols();j++)
-			gsl_matrix_set(m3, i, m1->cols()+j, gsl_matrix_get(m2,i,j));
-	}
-	return v3;
+    gsl_matrix *m1 = egsl_gslm(v1);
+    gsl_matrix *m2 = egsl_gslm(v2);
+    egsl_expect_size(v2, m1->rows(), 0);
+    val v3 = egsl_alloc(m1->rows(), m1->cols() + m2->cols());
+    gsl_matrix *m3 = egsl_gslm(v3);
+    int i,j;
+    for(i=0;i<m1->rows();i++) {
+        for(j=0;j<m1->cols();j++)
+            gsl_matrix_set(m3, i, j, gsl_matrix_get(m1,i,j));
+
+        for(j=0;j<m2->cols();j++)
+            gsl_matrix_set(m3, i, m1->cols()+j, gsl_matrix_get(m2,i,j));
+    }
+    return v3;
 }
 
 void egsl_add_to(val v1, val v2) {
-	gsl_matrix * m1 = egsl_gslm(v1);
-	gsl_matrix * m2 = egsl_gslm(v2);
-	gsl_matrix_add(m1,m2);
+    gsl_matrix * m1 = egsl_gslm(v1);
+    gsl_matrix * m2 = egsl_gslm(v2);
+    gsl_matrix_add(m1,m2);
 }
 
 void egsl_add_to_col(val v1, size_t j, val v2) {

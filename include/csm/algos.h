@@ -159,8 +159,6 @@ struct sm_result {
 
 void sm_icp(struct sm_params*input, struct sm_result*output);
 
-void sm_journal_open(const char* file);
-
 void csm_free_unused_memory();
 
 #endif

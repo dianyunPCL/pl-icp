@@ -2,11 +2,14 @@ cmake_minimum_required(VERSION 2.8)
 
 project(pl-icp)
 
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-set(CMAKE_C_FLAGS_RELEASE "-O3")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall") 
+#set(CMAKE_CXX_FLAGS "-std=c++11 -O0" )
+#set(CMAKE_CXX_FLAGS_RELEASE "-O0")
+#set(CMAKE_C_FLAGS_RELEASE "-O0")
 set(CMAKE_CXX_FLAGS "-std=c++11 -O3" )
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_C_FLAGS_RELEASE "-O3")
 
 #set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE Release)
@@ -20,16 +23,19 @@ LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 find_package(Eigen3 REQUIRED)
 find_package(G2O REQUIRED)
 find_package(CSparse REQUIRED)
+#Find_Package(Cholmod REQUIRED)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
     ${EIGEN3_INCLUDE_DIR}
     ${G2O_INCLUDE_DIR}
     ${CSPARSE_INCLUDE_DIR}
+#    ${CHOLMOD_INCLUDE_DIR}
 )
 
 message(STATUS "${CHOLMOD_INCLUDE_DIR}")
 message(STATUS "${CSPARSE_INCLUDE_DIR}")
+
 SET(G2O_LIBS
     g2o_cli g2o_core g2o_csparse_extension  g2o_ext_freeglut_minimal
     g2o_incremental g2o_interface g2o_interactive g2o_opengl_helper

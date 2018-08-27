@@ -10,7 +10,7 @@ int minmax(int from, int to, int x) {
 void possible_interval(const double *p_i_w, LDP ld, double max_angular_correction_deg,
                        double max_linear_correction, int*from, int*to, int*start_cell)
 {
-    double angle_res = (ld->max_theta-ld->min_theta)/ld->nrays;
+    double angle_res = (ld->max_theta - ld->min_theta)/ld->nrays;
 
     /* Delta for the angle */
     double delta = fabs(deg2rad(max_angular_correction_deg)) +
@@ -24,14 +24,14 @@ void possible_interval(const double *p_i_w, LDP ld, double max_angular_correctio
 
     /* Make sure that start_theta is in the interval [min_theta,max_theta].
        For example, -1 is not in [0, 2pi] */
-    if(start_theta<ld->min_theta) start_theta += 2*M_PI;
-    if(start_theta>ld->max_theta) start_theta -= 2*M_PI;
+    if(start_theta < ld->min_theta) start_theta += 2*M_PI;
+    if(start_theta > ld->max_theta) start_theta -= 2*M_PI;
 
     *start_cell  = (int)
         ((start_theta - ld->min_theta) / (ld->max_theta-ld->min_theta) * ld->nrays);
 
-    *from = minmax(0,ld->nrays-1, *start_cell-range);
-    *to =   minmax(0,ld->nrays-1, *start_cell+range);
+    *from = minmax(0, ld->nrays-1, *start_cell - range);
+    *to =   minmax(0, ld->nrays-1, *start_cell + range);
 
     if(0)
     printf("from: %d to: %d delta: %f start_theta: %f min/max theta: [%f,%f] range: %d start_cell: %d\n",
@@ -61,14 +61,14 @@ int is_nan(double v) {
 }
 
 int any_nan(const double *d, int n) {
-    int i; for(i=0;i<n;i++)
+    int i; for(i=0; i<n; i++)
         if(is_nan(d[i]))
             return 1;
     return 0;
 }
 
 double norm_d(const double p[2]) {
-    return sqrt(p[0]*p[0]+p[1]*p[1]);
+    return sqrt(p[0]*p[0] + p[1]*p[1]);
 }
 
 double deg2rad(double deg) {
@@ -80,8 +80,7 @@ double rad2deg(double rad) {
 }
 
 void copy_d(const double*from, int n, double*to) {
-    int i;
-    for(i=0; i<n; i++)
+    int i; for(i=0; i<n; i++)
         to[i] = from[i];
 }
 
@@ -140,16 +139,16 @@ void projection_on_line_d(const double a[2], const double b[2],
     double t0 = a[0] - b[0];
     double t1 = a[1] - b[1];
     double one_on_r = 1 / sqrt(t0*t0 + t1*t1);
-	/* normal */
-	double nx = t1  * one_on_r ;
-	double ny = -t0 * one_on_r ;
+    /* normal */
+    double nx = t1  * one_on_r;
+    double ny = -t0 * one_on_r;
     double c = nx, s = ny;
     double rho = c*a[0] + s*a[1];
 
-    res[0] = c*rho + s*s*p[0] - c*s*p[1] ;
-    res[1] = s*rho - c*s*p[0] + c*c*p[1] ;
-	
-	if(distance)
+    res[0] = c*rho + s*s*p[0] - c*s*p[1];
+    res[1] = s*rho - c*s*p[0] + c*c*p[1];
+
+    if(distance)
         *distance = fabs(rho - (c*p[0] + s*p[1]));
 }
 
@@ -159,8 +158,8 @@ void projection_on_segment_d(const double a[2], const double b[2],
     projection_on_line_d(a, b, x, proj, 0);
     if ((proj[0] - a[0]) * (proj[0] - b[0]) +
         (proj[1] - a[1]) * (proj[1] - b[1]) < 0 ) {
-		/* the projection is inside the segment */
-	} else 
+        /* the projection is inside the segment */
+    } else
         if(distance_squared_d(a, x) < distance_squared_d(b, x))
             copy_d(a, 2, proj);
 		else
@@ -261,9 +260,10 @@ double segment_alpha(const double p0[2], const double p1[2]) {
 
 
 static char tmp_buf[1024];
-const char* friendly_pose(const double*pose) {
+const char* friendly_pose(const double* pose) {
     sprintf(tmp_buf, "(%4.2f mm, %4.2f mm, %4.4f deg)",
-        1000*pose[0],1000*pose[1],rad2deg(pose[2]));
+        1000*pose[0], 1000*pose[1], rad2deg(pose[2]));
+
     return tmp_buf;
 }
 

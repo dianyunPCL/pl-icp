@@ -4,7 +4,7 @@
 #include "icp/icp_yogo.h"
 #include "icp/icp_optimization.h"
 
-//#include <time.h>
+#include <iomanip>
 #include <string.h>
 #include <cstring>
 #include <libgen.h>
@@ -81,6 +81,8 @@ int main(int argc, const char*argv[]) {
     copy_d(first_pose, 3, laser_ref->true_pose);
     copy_d(first_pose, 3, laser_ref->last_trans);
     copy_d(laser_ref->odometry, 3, laser_ref->estimate);
+    // @Vance: 在这里计算首帧点的笛卡尔坐标，后面icp函数里就不用重复计算了
+    ld_compute_cartesian(laser_ref);
 
     /** For the first scan, set estimate = odometry
      *  Add first vertex and first keyframe
@@ -123,11 +125,10 @@ int main(int argc, const char*argv[]) {
         params.laser_sens = laser_sens;
 
         /* Set first guess as the difference in odometry */
-        double odometry[3], ominus_laser[3], temp[3];
+        double odometry[3];
         pose_diff_d(laser_sens->odometry, laser_ref->odometry, odometry);
-        ominus_d(params.laser, ominus_laser);
-        oplus_d(ominus_laser, odometry, temp);
-        oplus_d(temp, params.laser, params.first_guess);
+        copy_d(odometry, 3, params.first_guess);
+
 
         /* Do the actual work */
         sm_icp(&params, &result);
@@ -152,6 +153,12 @@ int main(int argc, const char*argv[]) {
             get_global_pose(gp, laser_ref->true_pose, result.x);
             copy_d(gp, 3, laser_sens->true_pose);
             keyframes.push_back(*laser_sens);
+//            cout << std::setprecision(6);
+//            cout << "[icp][info] #" << frame_id << "# valid transform: " << result.x[0]
+//                 << ", " << result.x[1] << ", " << result.x[2]
+//                 << ", iterations = " << result.iterations << endl;
+//            cout << "[icp][info] #" << frame_id << "# global pose: " << gp[0]
+//                 << ", " << gp[1] << ", " << gp[2] << endl;
 
 //            if (frame_id > 497 && frame_id < 502) {
 //                printf("-- #%d iteration: %d, nvalid: %d, valid_transform: %f, %f, %f, true pose: %f, %f, %f\n",

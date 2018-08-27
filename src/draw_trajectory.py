@@ -117,8 +117,8 @@ def setAngles(angles, n):
 
 if __name__ =='__main__':
     point_num = 937
-    trajectory_file1 = "/home/vance/slam_ws/pl-icp/bin/trajectory-0821-1-raw.txt"
-    trajectory_file2 = "/home/vance/slam_ws/pl-icp/bin/trajectory-0821-1-opt.txt"
+    trajectory_file1 = "/home/vance/slam_ws/pl-icp/bin/080920-2-raw.txt"
+    trajectory_file2 = "/home/vance/slam_ws/pl-icp/bin/080920-2-opt.txt"
 
     poses1 = []
     poses2 = []

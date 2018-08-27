@@ -9,12 +9,12 @@
 #include <vector>
 
 struct gpc_corr {
-	double p[2];
-	double q[2];
+    double p[2];
+    double q[2];
 
-	double C[2][2];
-	
-	int valid;
+    double C[2][2];
+
+    int valid;
 };
 
 /**
@@ -35,14 +35,14 @@ struct gpc_corr {
 
 /** if c[k].valid is 0, the correspondence is not used */
 int gpc_solve(int K, const std::vector<gpc_corr>&,
-	const double*x0, const double *cov_x0,
-	double *x);
+    const double*x0, const double *cov_x0,
+    double *x);
 
 /* Some utilities functions */
 
-	/** Computes error for a single correspondence */
-	double gpc_error(const struct gpc_corr*co, const double*x);
+    /** Computes error for a single correspondence */
+    double gpc_error(const struct gpc_corr*co, const double*x);
 
-	double gpc_total_error(const std::vector<gpc_corr>& co, int n, const double*x);
+    double gpc_total_error(const std::vector<gpc_corr>& co, int n, const double*x);
 #endif
 

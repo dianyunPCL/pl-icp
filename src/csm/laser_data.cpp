@@ -114,53 +114,56 @@ void ld_dealloc(LDP ld){
 
 
 void ld_compute_cartesian(LDP ld) {
-	int i;
-    for(i=0; i<ld->nrays; i++) {
-        if(!ld_valid_ray(ld,i)) continue;
+    for(int i=0; i<ld->nrays; i++) {
+        if(!ld_valid_ray(ld, i)) continue;
         double x = cos(ld->theta[i]) * ld->readings[i];
         double y = sin(ld->theta[i]) * ld->readings[i];
-		
-		ld->points[i].p[0] = x, 
-		ld->points[i].p[1] = y;
+
+        ld->points[i].p[0] = x,
+        ld->points[i].p[1] = y;
         ld->points[i].rho = std::numeric_limits<double>::quiet_NaN();
         ld->points[i].phi = std::numeric_limits<double>::quiet_NaN();
-//        ld->points[i].rho = 0;
-//        ld->points[i].phi = 0;
-	}
+    }
 }
 
-
+/// @Vance: 实际上是根据相对变换转到相对帧坐标系下
 void ld_compute_world_coords(LDP ld, const double *pose) {
-	double pose_x = pose[0];
-	double pose_y = pose[1];
-	double pose_theta = pose[2];
-	double cos_theta = cos(pose_theta); 
-	double sin_theta = sin(pose_theta);
-	const int nrays = ld->nrays ;
+    double pose_x = pose[0];
+    double pose_y = pose[1];
+    double pose_theta = pose[2];
+    double cos_theta = cos(pose_theta);
+    double sin_theta = sin(pose_theta);
+    const int nrays = ld->nrays ;
 
-	point2d * points = ld->points;
-	point2d * points_w = ld->points_w;
-    int i; for(i=0; i<nrays; i++) {
-		if(!ld_valid_ray(ld,i)) continue;
-		double x0 = points[i].p[0], 
-		       y0 = points[i].p[1]; 
-		
-		if(is_nan(x0) || is_nan(y0)) {
-			sm_error("ld_compute_world_coords(): I expected that cartesian coords were already computed: ray #%d: %f %f.\n", i, x0, y0);
-		}
-		
-        points_w[i].p[0] = cos_theta * x0 - sin_theta*y0 + pose_x;
-        points_w[i].p[1] = sin_theta * x0 + cos_theta*y0 + pose_y;
-		/* polar coordinates */
-	}
-	
-    for(i=0; i<nrays; i++) {
-		double x = points_w[i].p[0];
-		double y = points_w[i].p[1];
+    point2d * points = ld->points;
+    point2d * points_w = ld->points_w;
+    int i; for(i=0; i<nrays; ++i) {
+        if(!ld_valid_ray(ld,i)) continue;
+        double x0 = points[i].p[0],
+               y0 = points[i].p[1];
+
+        if(is_nan(x0) || is_nan(y0)) {
+            sm_error("ld_compute_world_coords(): I expected that cartesian coords were already computed: ray #%d: %f %f.\n", i, x0, y0);
+        }
+
+        double x = cos_theta * x0 - sin_theta * y0 + pose_x;
+        double y = sin_theta * x0 + cos_theta * y0 + pose_y;
+        points_w[i].p[0] = x;
+        points_w[i].p[1] = y;
+        /* polar coordinates */
         points_w[i].rho = sqrt(x*x + y*y);
-		points_w[i].phi = atan2(y, x);
-	}
-	
+        points_w[i].phi = atan2(y, x);
+    }
+
+    /* polar coordinates */
+//    for(i=0; i<nrays; ++i) {
+//        if(!ld_valid_ray(ld, i)) continue;
+//        double x = points_w[i].p[0];
+//        double y = points_w[i].p[1];
+//        points_w[i].rho = sqrt(x*x + y*y);
+//        points_w[i].phi = atan2(y, x);
+//    }
+
 }
 
 
@@ -270,7 +273,7 @@ unsigned int ld_corr_hash(LDP ld){
 	unsigned int hash = 0;
 	unsigned int i    = 0;
 
-	for(i = 0; i < (unsigned)ld->nrays; i++) {
+    for(i = 0; i < (unsigned)ld->nrays; ++i) {
 		int str = ld_valid_corr(ld, (int)i) ? (ld->corr[i].j1 + 1000*ld->corr[i].j2) : -1;
 		hash ^= ((i & 1) == 0) ? (  (hash <<  7) ^ (str) ^ (hash >> 3)) :
 		                         (~((hash << 11) ^ (str) ^ (hash >> 5)));

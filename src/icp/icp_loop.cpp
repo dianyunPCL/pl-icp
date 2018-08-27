@@ -193,7 +193,7 @@ int compute_next_estimate(struct sm_params*params, const double x_old[3], double
                 c[k].C[0][0] += 2*sqrt(eps);
                 c[k].C[1][1] += 2*sqrt(eps);
             }
- #endif
+#endif
         } else {
             c[k].p[0] = laser_sens->points[i].p[0];
             c[k].p[1] = laser_sens->points[i].p[1];
